@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Infinite Quiz App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+    .quiz-container {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      margin-bottom: 20px;
+      font-size: 1.4em;
+    }
+    .option {
+      background: rgba(255,255,255,0.2);
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .option:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.02);
+    }
+    .option.correct {
+      background: #4caf50 !important;
+    }
+    .option.wrong {
+      background: #f44336 !important;
+    }
+    #next {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #03a9f4;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+      transition: background 0.3s;
+    }
+    #next:hover {
+      background: #0288d1;
+    }
+    #score {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Loading...</h2>
+    <div id="options"></div>
+    <button id="next">Next</button>
+    <div id="score"></div>
+  </div>
+
+  <script>
+    const questionBank = [
+      {
+        question: "What does HTML stand for?",
+        options: ["Hyperlinks and Text Markup Language", "Home Tool Markup Language", "Hyper Text Markup Language", "Hyper Text Makeup Language"],
+        answer: 2
+      },
+      {
+        question: "Which language is used for styling web pages?",
+        options: ["HTML", "JQuery", "CSS", "XML"],
+        answer: 2
+      },
+      {
+        question: "Which is not a JavaScript framework?",
+        options: ["Python Script", "JQuery", "Django", "NodeJS"],
+        answer: 2
+      },
+      {
+        question: "Which is used for Connect To Database?",
+        options: ["PHP", "HTML", "JS", "All"],
+        answer: 0
+      },
+      {
+        question: "What does CSS stand for?",
+        options: ["Cascading Style Sheets", "Colorful Style Sheets", "Creative Style System", "Computer Style Sheets"],
+        answer: 0
+      }
+    ];
+
+    let score = 0;
+    let currentQ = {};
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next");
+    const scoreEl = document.getElementById("score");
+
+    function getRandomQuestion() {
+      const randIndex = Math.floor(Math.random() * questionBank.length);
+      return questionBank[randIndex];
+    }
+
+    function loadQuestion() {
+      currentQ = getRandomQuestion();
+      questionEl.textContent = currentQ.question;
+      optionsEl.innerHTML = "";
+      currentQ.options.forEach((option, index) => {
+        const div = document.createElement("div");
+        div.textContent = option;
+        div.className = "option";
+        div.onclick = () => checkAnswer(index, div);
+        optionsEl.appendChild(div);
+      });
+      nextBtn.style.display = "none";
+    }
+
+    function checkAnswer(selected, el) {
+      const correct = currentQ.answer;
+      const options = document.querySelectorAll(".option");
+      options.forEach(option => option.style.pointerEvents = "none");
+
+      if (selected === correct) {
+        el.classList.add("correct");
+        score++;
+      } else {
+        el.classList.add("wrong");
+        options[correct].classList.add("correct");
+      }
+      scoreEl.textContent = `Score: ${score}`;
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.onclick = () => {
+      loadQuestion();
+    };
+
+    loadQuestion();
+  </script>
+</body>
+</html>
